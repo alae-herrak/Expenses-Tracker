@@ -3,6 +3,8 @@ import cors from "cors";
 import mongoose from "mongoose";
 import * as dotenv from "dotenv";
 
+import UserRouter from "./routes/user.js";
+
 dotenv.config();
 
 const app = express();
@@ -11,6 +13,8 @@ const MONGO_URI = process.env.MONGO_URI;
 
 app.use(cors());
 app.use(express.json());
+
+app.use("/users", UserRouter);
 
 mongoose.set("strictQuery", false);
 mongoose
