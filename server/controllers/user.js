@@ -12,3 +12,12 @@ export const createUser = async (req, res) => {
     res.send(error);
   }
 };
+
+export const getAllUsernames = async (req, res) => {
+  try {
+    const usernames = await User.find({}, { _id: 0, username: 1 });
+    res.send(usernames);
+  } catch (error) {
+    res.send(error);
+  }
+};
