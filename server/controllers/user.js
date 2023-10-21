@@ -1,4 +1,5 @@
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 
 export const createUser = async (req, res) => {
@@ -7,7 +8,8 @@ export const createUser = async (req, res) => {
   const user = new User({ username, profilePicture, password: hashedPassword });
   try {
     const savedUser = await user.save();
-    res.send(savedUser);
+    const token = jwt.sign({ _id: savedUser._id }, process.env.JWT_SECRET);
+    res.send({ user: savedUser, token });
   } catch (error) {
     res.send(error);
   }

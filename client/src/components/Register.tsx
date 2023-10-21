@@ -1,8 +1,11 @@
-import { useState, useEffect, FormEvent } from "react";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 import Logo from "../assets/logo.png";
 import { createUser, getAllUsernames } from "../api/user";
 import Input from "./auth-input";
+import { login } from "../redux/userSlice";
 
 interface errors {
   username: string;
@@ -12,6 +15,9 @@ interface errors {
 }
 
 const Register: React.FC = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const noProfilePicture = import.meta.env.VITE_NO_PROFILE_PICTURE;
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -83,7 +89,11 @@ const Register: React.FC = () => {
                 };
                 createUser(user)
                   .then((res) => {
-                    console.log(res.data);
+                    const { user, token } = res.data;
+                    localStorage.setItem("user", JSON.stringify(user));
+                    localStorage.setItem("token", token);
+                    dispatch(login());
+                    navigate("/");
                   })
                   .catch((err) => console.error(err));
               }
