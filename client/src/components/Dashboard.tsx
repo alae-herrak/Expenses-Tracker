@@ -1,13 +1,15 @@
-import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { RootState } from "../store";
+import { User } from "../redux/userSlice";
 
-const Dashboard: React.FC = () => {
+interface props {
+  user: User | null;
+}
+
+const Dashboard: React.FC<props> = ({user}) => {
   const navigate = useNavigate();
 
-  const user = useSelector((state: RootState) => state.user.user);
-  if (!user) navigate("/login");
+  if (!user?._id) navigate("/login");
 
   return (
     <div>
