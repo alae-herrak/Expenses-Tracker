@@ -30,6 +30,7 @@ const Register: React.FC = () => {
     passwordConfirmation: "",
     profilePicture: "",
   });
+  const [loading, setLoading] = useState<boolean>(false);
 
   const setErrorsQuick = (field: string, message: string) => {
     setErrors((prev) => ({
@@ -63,8 +64,10 @@ const Register: React.FC = () => {
 
   const handleRegister = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
     getAllUsernames()
       .then((res) => {
+        setLoading(false);
         const usernameExists = res.data.find((e) => username === e.username);
         if (usernameExists) {
           setErrorsQuick("username", "Username already exists");
@@ -81,7 +84,8 @@ const Register: React.FC = () => {
               setErrorsQuick("passwordConfirmation", "Passwords do not match");
             else {
               setErrorsQuick("passwordConfirmation", "");
-              if (errors.profilePicture === "") {
+              if (!errors.profilePicture) {
+                setLoading(true);
                 const user = {
                   username,
                   password,
@@ -89,19 +93,24 @@ const Register: React.FC = () => {
                 };
                 createUser(user)
                   .then((res) => {
+                    setLoading(false);
                     const { user, token } = res.data;
                     localStorage.setItem("user", JSON.stringify(user));
                     localStorage.setItem("token", token);
                     dispatch(login());
                     navigate("/");
                   })
-                  .catch((err) => console.error(err));
+                  .catch((err) => {
+                    console.error(err), setLoading(false);
+                  });
               }
             }
           }
         }
       })
-      .catch((err) => console.error(err));
+      .catch((err) => {
+        console.error(err), setLoading(false);
+      });
   };
 
   return (
@@ -176,8 +185,10 @@ const Register: React.FC = () => {
             {errors.profilePicture}
           </span>
           <button
-            type="submit"
-            className="w-[250px] rounded-md bg-slate-600 p-3 text-slate-50 hover:bg-slate-500"
+            disabled={loading}
+            className={`w-[250px] rounded-md ${
+              loading ? "cursor-not-allowed bg-gray-400" : "bg-slate-600"
+            } p-3 text-slate-50 hover:bg-slate-500`}
           >
             Register
           </button>

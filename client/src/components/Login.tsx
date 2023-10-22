@@ -14,11 +14,14 @@ const Login: React.FC = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
     loginUser(username, password)
       .then((res) => {
+        setLoading(false);
         if (!res.data) setError("Incorrect username or password");
         else {
           const { user, token } = res.data;
@@ -28,7 +31,9 @@ const Login: React.FC = () => {
           navigate("/");
         }
       })
-      .catch((err) => console.error(err));
+      .catch((err) => {
+        console.error(err), setLoading(false);
+      });
   };
 
   return (
@@ -57,7 +62,12 @@ const Login: React.FC = () => {
             setInputValue={setPassword}
             error={""}
           />
-          <button className="w-[250px] rounded-md bg-slate-600 p-3 text-slate-50 hover:bg-slate-500">
+          <button
+            disabled={loading}
+            className={`w-[250px] rounded-md ${
+              loading ? "cursor-not-allowed bg-gray-400" : "bg-slate-600"
+            } p-3 text-slate-50 hover:bg-slate-500`}
+          >
             Login
           </button>
           <p>
