@@ -23,3 +23,21 @@ export const getAllUsernames = async (req, res) => {
     res.send(error);
   }
 };
+
+export const loginUser = async (req, res) => {
+  const { username, password } = req.body;
+  try {
+    const user = await User.findOne({ username: username });
+    if (!user) res.send(null);
+    else {
+      const correctPassword = bcrypt.compareSync(password, user.password);
+      if (!correctPassword) res.send(null);
+      else {
+        const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
+        res.send({ user, token });
+      }
+    }
+  } catch (error) {
+    res.send(error);
+  }
+};

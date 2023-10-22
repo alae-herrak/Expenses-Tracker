@@ -1,6 +1,36 @@
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+
 import Logo from "../assets/logo.png";
+import Input from "./auth-input";
+import { loginUser } from "../api/user";
+import { login } from "../redux/userSlice";
 
 const Login: React.FC = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const [username, setUsername] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [error, setError] = useState<string>("");
+
+  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    loginUser(username, password)
+      .then((res) => {
+        if (!res.data) setError("Incorrect username or password");
+        else {
+          const { user, token } = res.data;
+          localStorage.setItem("user", JSON.stringify(user));
+          localStorage.setItem("token", token);
+          dispatch(login());
+          navigate("/");
+        }
+      })
+      .catch((err) => console.error(err));
+  };
+
   return (
     <div className="flex h-screen flex-col items-center p-10">
       <div className="flex items-center">
@@ -9,24 +39,24 @@ const Login: React.FC = () => {
       </div>
       <div className="mt-10 flex h-full w-full max-w-screen-sm flex-col items-center justify-center gap-5 rounded-md border-2 border-neutral-500 bg-slate-200 text-gray-800">
         <p className="text-xl font-light">Welcome back, login to continue</p>
-        <form className="flex flex-col items-center gap-3">
-          <input
+        <form
+          className="flex flex-col items-center gap-3"
+          onSubmit={handleLogin}
+        >
+          <Input
             type="text"
             placeholder="Username"
-            className="w-[250px] rounded-md p-3 outline-slate-600 ring-slate-50 drop-shadow-md hover:ring-1"
+            inputValue={username}
+            setInputValue={setUsername}
+            error={error}
           />
-          {/* border-[1px] border-red-400 */}
-          {/* <span className="w-[250px] text-left text-sm text-red-400">
-            Username error
-          </span> */}
-          <input
+          <Input
             type="password"
             placeholder="Password"
-            className="w-[250px] rounded-md p-3 outline-slate-600 ring-slate-50 drop-shadow-md hover:ring-1"
+            inputValue={password}
+            setInputValue={setPassword}
+            error={""}
           />
-          {/* <span className="w-[250px] text-left text-sm text-red-400">
-            Password error
-          </span> */}
           <button className="w-[250px] rounded-md bg-slate-600 p-3 text-slate-50 hover:bg-slate-500">
             Login
           </button>

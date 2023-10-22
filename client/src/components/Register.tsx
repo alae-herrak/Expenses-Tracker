@@ -7,16 +7,16 @@ import { createUser, getAllUsernames } from "../api/user";
 import Input from "./auth-input";
 import { login } from "../redux/userSlice";
 
-interface errors {
-  username: string;
-  password: string;
-  passwordConfirmation: string;
-  profilePicture: string;
-}
-
 const Register: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  interface errors {
+    username: string;
+    password: string;
+    passwordConfirmation: string;
+    profilePicture: string;
+  }
 
   const noProfilePicture = import.meta.env.VITE_NO_PROFILE_PICTURE;
   const [username, setUsername] = useState<string>("");
