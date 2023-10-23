@@ -46,13 +46,14 @@ const Navbar: React.FC<props> = ({ user }) => {
             <Link href="/" textContent="📊Dashboard" />
             <Link href="/income" textContent="📈Income" />
             <Link href="/expenses" textContent="📉Expenses" />
-            <Link href="/settings" textContent="⚙️Settings" />
+            <span className="hidden lg:block">|</span>
+            <Link href="/settings" textContent="Settings" />
             <a
               className="rounded-md p-1 hover:bg-slate-200 hover:text-slate-900"
               href=""
               onClick={() => dispatch(logout())}
             >
-              ➡️Logout
+              Logout
             </a>
           </nav>
         </div>
